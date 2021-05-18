@@ -23,7 +23,7 @@ mongoose.connect('mongodb+srv://Yerkanat:Mahaev228322@posts.8lbsm.mongodb.net/my
 app.get('/', (req, res) => {
     console.log('///')
     res.send('<h1>HI</h1>')
-
+ 
 })
 
 app.post('/login', (req, res) => {
@@ -43,10 +43,15 @@ app.post('/login', (req, res) => {
 app.post('/commitpost', (req, res) => {
     console.log('commitpost invoked')
 
+    let arr = req.body.guestInfo.split('-')
+    let tempik = arr.indexOf('')
+    if (tempik !== -1) {
+        arr.splice(tempik, 1)
+    }
     const post = new Post({
         guest: req.body.guestName,
         eventName: req.body.eventName,
-        info: req.body.guestInfo,
+        info: arr,
         text: req.body.eventInfo
     })
 
