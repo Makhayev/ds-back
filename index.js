@@ -4,10 +4,25 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const app = Express()
 const Post = require('./Post')
-// const bodyParser = require('body-parser')
+const multer = require('multer')
+const fs = require('fs')
+const path = require('path')
 app.use(Express.json())
 app.use(cors())
-// app.use(Express.urlencoded({extended: false}))
+
+var storage = multer.diskStorage({
+    destination: (req, res, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, res, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+})
+
+var upload = multer({storage: storage})
+
+
+
 mongoose.connect('mongodb+srv://Yerkanat:Mahaev228322@posts.8lbsm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', 
 {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true}, (err) => {
     if (err) {
@@ -24,6 +39,23 @@ app.get('/', (req, res) => {
     console.log('///')
     res.send('<h1>HI</h1>')
  
+})
+
+app.post('/giveimg', upload.single('image'), (req, res, next) => {
+
+    const post = new Post({
+        img: {
+            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.body.guestName)),
+            contentType: 'image/jpg'
+        },
+        guest: req.body.guestName,
+        eventName: req.body.eventName,
+        info: arr,
+        text: req.body.eventInfo
+    })
+
+    
+
 })
 
 app.post('/login', (req, res) => {
