@@ -7,7 +7,7 @@ const Post = require('./Post')
 const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
-app.use(Express.json())
+app.use(Express.json({limit: '10MB'}))
 app.use(cors())
 
 var storage = multer.diskStorage({
@@ -43,10 +43,21 @@ app.get('/', (req, res) => {
 
 app.post('/giveimg', upload.single('image'), (req, res, next) => {
 
+    // var imagee = fs.readFileSync(req.file.path)
+    // var encode_img = imagee.toString('base64')
+
+    console.log('giveimg invoked')
+    // console.log(req.file)
+    // console.log(req.body.img)
+    let arr = req.body.guestInfo.split('-')
+    let tempik = arr.indexOf('')
+    if (tempik !== -1) {
+        arr.splice(tempik, 1)
+    }
     const post = new Post({
         img: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.body.guestName)),
-            contentType: 'image/jpg'
+            data: req.body.img,
+            contentType: 'image/png'
         },
         guest: req.body.guestName,
         eventName: req.body.eventName,
@@ -55,6 +66,16 @@ app.post('/giveimg', upload.single('image'), (req, res, next) => {
     })
 
     
+    Post.create(post, (err, item) => {
+        if (err) {
+            console.log(err)
+
+        } else {
+            console.log('saved')
+            item.save()
+
+        }
+    })
 
 })
 
